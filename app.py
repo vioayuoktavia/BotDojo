@@ -5,6 +5,7 @@ from slack import WebClient
 from slackeventsapi import SlackEventAdapter
 from bot_for_dojo import DojoBot
 from flask_ngrok import run_with_ngrok
+from random import randint
 
 
 # Initialize a Flask app to host the events adapter
@@ -42,6 +43,21 @@ def weather():
 
     message = weather_slash.weather_message_payload()
     sending_message = slack_web_client.chat_postMessage(**message)
+    if sending_message:
+        status = "success"
+
+    return jsonify(status)
+
+@app.route('/slack/kucing', methods=["POST"])
+def kucing():
+    status = "failed"
+    channel_id = "dojo-demo"
+    # channel_id = "q2-budget"
+
+    sending_message = slack_web_client.files_upload(
+                        channels=channel_id,
+                        file="./images/kucing%i.jpeg" % randint(1, 6)
+                    )
     if sending_message:
         status = "success"
 
